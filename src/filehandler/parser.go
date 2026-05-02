@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func parseBoard(filename string) (*puzzle.Board, error) {
+func ParseBoard(filename string) (*puzzle.Board, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to open file: %w", err)
@@ -36,7 +36,7 @@ func parseBoard(filename string) (*puzzle.Board, error) {
 		N:        N,
 		M:        M,
 		Grid:     make([][]rune, N),
-		Cost:     make([][]int, N), 
+		Cost:     make([][]int, N),
 		Obstacle: make(map[int]puzzle.Point),
 		Lava:     []puzzle.Point{},
 	}
