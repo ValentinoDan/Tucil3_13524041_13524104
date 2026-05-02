@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"iceSlidingPuzzle/src/puzzle"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -43,13 +44,13 @@ func parseBoard(filename string) (*puzzle.Board, error) {
 	// read the grid lines
 	for row := 0; row < N; row++ {
 		if !scanner.Scan() {
-			return nil, fmt.Errorf("expected %d lines but got fewer", N)
+			return nil, fmt.Errorf("Expected %d lines but got fewer", N)
 		}
 		line := strings.TrimSpace(scanner.Text()) // remove space
 
 		// validate line length
 		if len(line) != M {
-			return nil, fmt.Errorf("invalid board: row %d has %d columns instead of %d", row+1, len(line), M)
+			return nil, fmt.Errorf("Invalid board: row %d has %d columns instead of %d", row+1, len(line), M)
 		}
 
 		board.Grid[row] = make([]rune, M)
@@ -65,6 +66,30 @@ func parseBoard(filename string) (*puzzle.Board, error) {
 			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 				board.Obstacle[int(char-'0')] = puzzle.Point{Row: row, Col: col}
 			}
+		}
+	}
+
+	// read the cost lines
+	for row := 0; row < N; row++ {
+		if !scanner.Scan() {
+			return nil, fmt.Errorf("Expected %d lines but got fewer", N)
+		}
+		line := strings.TrimSpace(scanner.Text()) // remove space
+
+		fields := strings.Fields(line) // parse multipe digit number
+
+		// validate line length
+		if len(fields) != M {
+			return nil, fmt.Errorf("Invalid cost board: row %d has %d columns instead of %d", row+1, len(fields), M)
+		}
+
+		board.Cost[row] = make([]int, M)
+		for col, nums := range fields {
+			cost, err := strconv.Atoi(nums)
+			if err != nil {
+				return nil, fmt.Errorf("Invalid cost value at row %d, col %d: %s", row+1, col+1, nums)
+			}
+			board.Cost[row][col] = cost
 		}
 	}
 
