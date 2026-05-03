@@ -5,91 +5,77 @@ import (
 )
 
 func AStarSearch(board *puzzle.Board) ([]puzzle.Point, int) {
+	var pathTaken []puzzle.Point
+	var totalCost int
+
 	pq := &puzzle.PriorityQueue{}
-
-	// gScore: Map untuk menyimpan biaya nyata terendah dari Start ke State tertentu
-	// Ini adalah g(n)
-	gScore := make(map[puzzle.State]int)
-
-	// visited: Untuk menandai state yang sudah diproses secara optimal
 	visited := make(map[puzzle.State]bool)
+	stateCost := make(map[puzzle.State]int)
 
 	startState := puzzle.State{
 		Pos:     board.Start,
 		NextNum: 0,
 	}
+	stateCost[startState] = 0
 
-	// Inisialisasi awal
-	gScore[startState] = 0
-	h := calculateHeuristic(board, startState)
-
-	// Node awal dimasukkan ke PQ
-	// f(n) = g(n) + h(n) => 0 + h
-	pq.Push(&puzzle.Node{
+	startNode := &puzzle.Node{
 		State:  startState,
-		Cost:   0 + h,
+		Cost:   stateCost[startState] + puzzle.CalculateHeuristic(board, startState),
+		Depth:  0,
 		Parent: nil,
-	})
+		Dir:    puzzle.Nil,
+	}
+
+	pq.Push(startNode)
+	visited[startState] = true
 
 	var finalNode *puzzle.Node
 	directions := []puzzle.Direction{puzzle.Up, puzzle.Down, puzzle.Left, puzzle.Right}
 
 	for !pq.IsEmpty() {
-		// Ambil node dengan f(n) terkecil
 		curr := pq.Pop()
 
-		// Cek apakah sudah sampai Goal dengan semua checkpoint
 		if puzzle.IsGoal(curr.State.Pos, board) && curr.State.NextNum == len(board.Checkpoint) {
 			finalNode = curr
 			break
 		}
 
-		if visited[curr.State] {
-			continue
-		}
-		visited[curr.State] = true
-
 		for _, dir := range directions {
-			// Fungsi slide dari helper.go
 			nextState, moveCost, moved := slide(curr.State, dir, board)
 
 			if moved {
-				// g(n) baru = g(n) sekarang + biaya langkah barusan
-				tentativeGScore := gScore[curr.State] + moveCost
+				newCost := stateCost[curr.State] + moveCost
+				if !visited[nextState] || newCost < stateCost[nextState] {
+					visited[nextState] = true
+					stateCost[nextState] = newCost
 
-				// Jika rute ini lebih murah dari rute yang pernah dicatat sebelumnya
-				if oldG, exists := gScore[nextState]; !exists || tentativeGScore < oldG {
-					gScore[nextState] = tentativeGScore
-
-					// h(n) dihitung menggunakan fungsi yang sama dengan GBFS
-					h := calculateHeuristic(board, nextState)
-
-					// Push ke PQ dengan Prioritas f(n) = g(n) + h(n)
-					pq.Push(&puzzle.Node{
+					neighborNode := &puzzle.Node{
 						State:  nextState,
-						Cost:   tentativeGScore + h, // KUNCI UTAMA A*
+						Cost:   newCost + puzzle.CalculateHeuristic(board, nextState),
+						Depth:  curr.Depth + 1,
 						Parent: curr,
 						Dir:    dir,
-					})
+					}
+
+					pq.Push(neighborNode)
 				}
 			}
 		}
 	}
 
 	if finalNode == nil {
-		return []puzzle.Point{}, 0
+		return pathTaken, 0
 	}
 
-	// Traceback (Mundur dari Goal ke Start)
-	var pathTaken []puzzle.Point
-	for n := finalNode; n != nil; n = n.Parent {
-		pathTaken = append(pathTaken, n.State.Pos)
+	currNode := finalNode
+	for currNode != nil {
+		pathTaken = append(pathTaken, currNode.State.Pos)
+		currNode = currNode.Parent
 	}
-
-	// Membalikkan array (Reverse) karena append menambahkan ke belakang
 	for i, j := 0, len(pathTaken)-1; i < j; i, j = i+1, j-1 {
 		pathTaken[i], pathTaken[j] = pathTaken[j], pathTaken[i]
 	}
 
-	return pathTaken, gScore[finalNode.State]
+	totalCost = stateCost[finalNode.State]
+	return pathTaken, totalCost
 }

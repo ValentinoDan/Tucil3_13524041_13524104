@@ -19,7 +19,7 @@ func GreedyBestFirstSearch(board *puzzle.Board) ([]puzzle.Point, int) {
 
 	startNode := &puzzle.Node{
 		State:  startState,
-		Cost:   calculateHeuristic(board, startState),
+		Cost:   puzzle.CalculateHeuristic(board, startState),
 		Depth:  0,
 		Parent: nil,
 		Dir:    puzzle.Nil,
@@ -46,7 +46,7 @@ func GreedyBestFirstSearch(board *puzzle.Board) ([]puzzle.Point, int) {
 
 				neighborNode := &puzzle.Node{
 					State:  nextState,
-					Cost:   calculateHeuristic(board, nextState),
+					Cost:   puzzle.CalculateHeuristic(board, nextState),
 					Depth:  curr.Depth + 1,
 					Parent: curr,
 					Dir:    dir,

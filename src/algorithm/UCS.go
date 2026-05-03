@@ -4,17 +4,17 @@ import (
 	"iceSlidingPuzzle/src/puzzle"
 )
 
-func UCS(board *puzzle.Board) (*puzzle.Node, int){
+func UCS(board *puzzle.Board) (*puzzle.Node, int) {
 	pq := &puzzle.PriorityQueue{}
-	visited := make(map[puzzle.State]bool)	
+	visited := make(map[puzzle.State]bool)
 	iter := 0
 
 	startNode := &puzzle.Node{
-		State: puzzle.State{Pos: board.Start, NextNum: 0},
-		Cost:  0,
-		Depth: 0,
+		State:  puzzle.State{Pos: board.Start, NextNum: 0},
+		Cost:   0,
+		Depth:  0,
 		Parent: nil,
-		Dir: puzzle.Nil,
+		Dir:    puzzle.Nil,
 	}
 	pq.Push(startNode)
 
@@ -22,7 +22,7 @@ func UCS(board *puzzle.Board) (*puzzle.Node, int){
 		curr := pq.Pop()
 		iter++
 
-		if visited[curr.State]{
+		if visited[curr.State] {
 			continue
 		}
 		visited[curr.State] = true
@@ -35,7 +35,7 @@ func UCS(board *puzzle.Board) (*puzzle.Node, int){
 		// explore others
 		for _, dir := range []puzzle.Direction{puzzle.Up, puzzle.Down, puzzle.Left, puzzle.Right} {
 			nextState, moveCost, valid := slide(curr.State, dir, board)
-			
+
 			if valid {
 				nextNode := &puzzle.Node{
 					State:  nextState,

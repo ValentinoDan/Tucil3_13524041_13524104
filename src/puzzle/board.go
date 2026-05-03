@@ -41,7 +41,7 @@ func GetCost(p Point, board *Board) int {
 	return board.Cost[p.Row][p.Col]
 }
 
-// print board 
+// print board
 func (b *Board) Print() {
 	fmt.Printf("Board Size: %d x %d\n", b.N, b.M)
 	fmt.Println("Grid:")
