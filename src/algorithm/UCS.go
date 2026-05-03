@@ -12,7 +12,7 @@ func UCS(board *puzzle.Board) (*puzzle.Node, int){
 	startNode := &puzzle.Node{
 		State: puzzle.State{Pos: board.Start, NextNum: 0},
 		Cost:  0,
-		Depth: 0,
+		TurnCount: 0,
 		Parent: nil,
 		Dir: puzzle.Nil,
 	}
@@ -40,7 +40,7 @@ func UCS(board *puzzle.Board) (*puzzle.Node, int){
 				nextNode := &puzzle.Node{
 					State:  nextState,
 					Cost:   curr.Cost + moveCost,
-					Depth:  curr.Depth + 1,
+					TurnCount:  curr.TurnCount + 1,
 					Parent: curr,
 					Dir:    dir,
 				}
@@ -48,5 +48,6 @@ func UCS(board *puzzle.Board) (*puzzle.Node, int){
 			}
 		}
 	}
+
 	return nil, iter
 }

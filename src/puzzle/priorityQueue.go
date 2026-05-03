@@ -13,7 +13,7 @@ const (
 type Node struct {
 	State 	State 
 	Cost  	int   
-	Depth 	int    
+	TurnCount int
 	Parent *Node
 	Dir 	Direction
 }
