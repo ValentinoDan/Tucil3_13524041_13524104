@@ -7,7 +7,7 @@ type Board struct {
 	Grid        [][]rune
 	Cost        [][]int
 	Start, Goal Point
-	Obstacle    map[int]Point
+	Checkpoint  map[int]Point
 	Lava        []Point
 }
 
@@ -16,11 +16,11 @@ type Point struct {
 }
 
 // Checker functions
-func isWall(p Point, board *Board) bool {
+func IsWall(p Point, board *Board) bool {
 	return (board.Grid[p.Row][p.Col] == 'X')
 }
 
-func isLava(p Point, board *Board) bool {
+func IsLava(p Point, board *Board) bool {
 	for _, l := range board.Lava {
 		if l.Row == p.Row && l.Col == p.Col {
 			return true
@@ -29,15 +29,15 @@ func isLava(p Point, board *Board) bool {
 	return false
 }
 
-func isGoal(p Point, board *Board) bool {
+func IsGoal(p Point, board *Board) bool {
 	return (board.Goal.Row == p.Row && board.Goal.Col == p.Col)
 }
 
-func isInBounds(p Point, board *Board) bool {
+func IsInBounds(p Point, board *Board) bool {
 	return (p.Row >= 0 && p.Row < board.N && p.Col >= 0 && p.Col < board.M)
 }
 
-func getCost(p Point, board *Board) int {
+func GetCost(p Point, board *Board) int {
 	return board.Cost[p.Row][p.Col]
 }
 
