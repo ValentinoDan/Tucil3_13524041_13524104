@@ -7,19 +7,19 @@ const (
 	Down  Direction = "DOWN"
 	Left  Direction = "LEFT"
 	Right Direction = "RIGHT"
-	Nil Direction   = "NIL"
+	Nil   Direction = "NIL"
 )
 
 type Node struct {
-	State 	State 
-	Cost  	int   
-	Depth 	int    
+	State  State
+	Cost   int
+	Depth  int
 	Parent *Node
-	Dir 	Direction
+	Dir    Direction
 }
 
 type State struct {
-	Pos 	Point
+	Pos     Point
 	NextNum int
 }
 
@@ -44,9 +44,9 @@ func (pq *PriorityQueue) Pop() *Node {
 	// put last element to the root
 	lastIdx := len(pq.Nodes) - 1
 	pq.Nodes[0] = pq.Nodes[lastIdx]
-	pq.Nodes = pq.Nodes[:lastIdx] 
+	pq.Nodes = pq.Nodes[:lastIdx]
 
-	// adjust the heap 
+	// adjust the heap
 	if len(pq.Nodes) > 0 {
 		pq.downHeap(0)
 	}
