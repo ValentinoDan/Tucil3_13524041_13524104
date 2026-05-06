@@ -3,7 +3,6 @@ package gui
 import (
 	"iceSlidingPuzzle/src/puzzle"
 	"time"
-	"fmt"
 )
 
 // Cell type
@@ -28,15 +27,15 @@ const (
 // handles solution animation and Pback control
 type Pback struct {
 	// Board and path
-	board       *puzzle.Board
-	pathPoints  []puzzle.Point // start to goal
-	state       PbackState
-	currStep    int
-	totalSteps  int
-	speed       time.Duration // ms
-	startTime   time.Time
-	pausedTime  time.Time
-	totalPaused time.Duration
+	board         *puzzle.Board
+	pathPoints    []puzzle.Point // start to goal
+	state         PbackState
+	currStep      int
+	totalSteps    int
+	speed         time.Duration // ms
+	lastStepTime  time.Time
+	pausedElapsed time.Duration
+	finishTime    time.Time
 
 	onStepChange  func(int) // called when step changes
 	onStateChange func(PbackState) // called when play/pause/stop state changes
@@ -71,8 +70,6 @@ func (p *Pback) SetCallbacks(onStep func(int), onStateChange func(PbackState)) {
 }
 
 func (p *Pback) Play() {
-	fmt.Printf("Play called: state=%d currStep=%d totalSteps=%d speed=%v\n", 
-        p.state, p.currStep, p.totalSteps, p.speed)
 	if p.state == PbackPlaying {
 		return
 	}
@@ -81,12 +78,9 @@ func (p *Pback) Play() {
 		p.currStep = 0 // restart
 	}
 
+	p.finishTime = time.Time{}
 	p.state = PbackPlaying
-	p.startTime = time.Now()
-	if !p.pausedTime.IsZero() {
-		p.totalPaused += time.Since(p.pausedTime)
-		p.pausedTime = time.Time{}
-	}
+	p.lastStepTime = time.Now()
 
 	p.onStateChange(PbackPlaying)
 }
@@ -96,17 +90,17 @@ func (p *Pback) Pause() {
 		return
 	}
 
+	p.pausedElapsed = time.Since(p.lastStepTime)
 	p.state = PbackPaused
-	p.pausedTime = time.Now()
 	p.onStateChange(PbackPaused)
 }
 
 func (p *Pback) Stop() {
 	p.state = PbackStopped
 	p.currStep = 0
-	p.startTime = time.Time{}
-	p.pausedTime = time.Time{}
-	p.totalPaused = 0
+	p.lastStepTime = time.Time{}
+	p.pausedElapsed = 0
+	p.finishTime = time.Time{}
 	p.onStepChange(0)
 	p.onStateChange(PbackStopped)
 }
@@ -114,6 +108,7 @@ func (p *Pback) Stop() {
 func (p *Pback) NextStep() {
 	if p.currStep < p.totalSteps {
 		p.currStep++
+		p.lastStepTime = time.Now()
 		p.onStepChange(p.currStep)
 	}
 }
@@ -121,6 +116,7 @@ func (p *Pback) NextStep() {
 func (p *Pback) PrevStep() {
 	if p.currStep > 0 {
 		p.currStep--
+		p.lastStepTime = time.Now()
 		p.onStepChange(p.currStep)
 	}
 }
@@ -128,6 +124,8 @@ func (p *Pback) PrevStep() {
 func (p *Pback) GoToStep(step int) {
 	if step >= 0 && step <= p.totalSteps {
 		p.currStep = step
+		p.lastStepTime = time.Now() // reset timer
+		p.finishTime = time.Time{}
 		p.onStepChange(step)
 	}
 }
@@ -138,73 +136,25 @@ func (p *Pback) Update() bool {
 	}
 
 	if p.currStep >= p.totalSteps {
-		p.Stop()
+		// delay 2s
+		if p.finishTime.IsZero() {
+			p.finishTime = time.Now()
+		}
+		if time.Since(p.finishTime) >= 2*time.Second {
+			p.Stop()
+		}
 		return false
 	}
 
 	// calc time
-	elapsed := time.Since(p.startTime) - p.totalPaused
-	expectedStep := int(elapsed / p.speed)
-	targetStep := expectedStep
-
-	if targetStep > p.totalSteps {
-		targetStep = p.totalSteps
-	}
-
-	if targetStep != p.currStep {
-		p.currStep = targetStep
+	elapsed := time.Since(p.lastStepTime)
+	if elapsed >= p.speed {
+		p.lastStepTime = time.Now()
+		p.currStep++
 		p.onStepChange(p.currStep)
-
-		if p.currStep >= p.totalSteps {
-			p.Stop()
-			return false
-		}
 	}
 
 	return true
-}
-
-// returns the player position at curr step
-func (p *Pback) GetCurrPosition() puzzle.Point {
-	if p.currStep < len(p.pathPoints) {
-		return p.pathPoints[p.currStep]
-	}
-	return puzzle.Point{Row: -1, Col: -1}
-}
-
-// returns the grid with player pos at curr step
-func (p *Pback) GetCurrGrid() [][]int {
-	grid := make([][]int, p.board.N)
-	for r := 0; r < p.board.N; r++ {
-		grid[r] = make([]int, p.board.M)
-		for c := 0; c < p.board.M; c++ {
-			ch := p.board.Grid[r][c]
-			switch ch {
-			case 'X':
-				grid[r][c] = PBCellWall
-			case 'L':
-				grid[r][c] = PBCellLava
-			case 'O':
-				grid[r][c] = PBCellGoal
-			case 'Z':
-				grid[r][c] = PBCellPlayer
-			default:
-				if ch >= '0' && ch <= '9' {
-					grid[r][c] = PBCellPoint
-				} else {
-					grid[r][c] = PBCellEmpty
-				}
-			}
-		}
-	}
-
-	// Place player at curr position
-	pos := p.GetCurrPosition()
-	if pos.Row >= 0 && pos.Row < p.board.N && pos.Col >= 0 && pos.Col < p.board.M {
-		grid[pos.Row][pos.Col] = PBCellPlayer
-	}
-
-	return grid
 }
 
 // Getter Funcs

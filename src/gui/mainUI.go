@@ -62,15 +62,6 @@ func (m *MainUI) showPage(p Page) {
 	m.currentPage = p
 	var content fyne.CanvasObject
 
-	// Stop previous result page ticker
-	if m.resultPage != nil && m.resultPage.stopCh != nil {
-        select {
-        case <-m.resultPage.stopCh: 
-        default:
-            close(m.resultPage.stopCh)
-        }
-    }
-
 	switch p {
 	case PageLibrary:
 		m.libraryPage = NewLibraryPage(m)

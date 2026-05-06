@@ -14,13 +14,11 @@ import (
 
 type ResultPage struct {
 	main        *MainUI
-	animationID int
 	pback 		*Pback
-	stopCh 		chan struct{}
 }
 
 func NewResultPage(m *MainUI) *ResultPage {
-	p := &ResultPage{main: m, stopCh: make(chan struct{})}
+	p := &ResultPage{main: m}
 	if m.currentBoard != nil && len(m.solverPath) > 1 {
 		p.pback = NewPback(m.currentBoard, m.solverPath)
 	}
@@ -115,7 +113,24 @@ func (p *ResultPage) buildVisualizationArea() fyne.CanvasObject {
 		return container.NewStack(bg, container.NewCenter(widget.NewLabelWithStyle("Load a map first", fyne.TextAlignCenter, fyne.TextStyle{})))
 	}
 
-	cellSize := float32(56)
+	maxCells := b.M
+	if b.N > maxCells {
+		maxCells = b.N
+	}
+
+	var cellSize float32
+	switch {
+	case maxCells <= 5:
+		cellSize = 60
+	case maxCells <= 8:
+		cellSize = 48
+	case maxCells <= 12:
+		cellSize = 36
+	case maxCells <= 16:
+		cellSize = 28
+	default:
+		cellSize = 22
+	}
 	cellGap := float32(2)
 	pad := float32(12)
 	boardWidth := pad*2 + float32(b.M)*cellSize + float32(b.M-1)*cellGap
@@ -140,7 +155,7 @@ func (p *ResultPage) buildVisualizationArea() fyne.CanvasObject {
 	fixedBoard := container.NewGridWrap(fyne.NewSize(boardWidth, boardHeight), boardStack)
 
 	// Playback controls
-	controls := p.buildPlaybackControls(pathOverlay, cellSize, pad, cellGap, p.stopCh)
+	controls := p.buildPlaybackControls(pathOverlay, cellSize, pad, cellGap)
 
 	// Label
 	result := p.main.solverResult
@@ -174,7 +189,7 @@ func (p *ResultPage) buildVisualizationArea() fyne.CanvasObject {
 	return container.NewStack(bg, container.NewScroll(vizContent))
 }
 
-func (p *ResultPage) buildPlaybackControls(overlay *fyne.Container, cellSize, pad, gap float32, stopCh chan struct{}) fyne.CanvasObject {
+func (p *ResultPage) buildPlaybackControls(overlay *fyne.Container, cellSize, pad, gap float32) fyne.CanvasObject {
 	if p.pback == nil {
 		return container.NewCenter(canvas.NewText("No path to play", ColorSlate400))
 	}
@@ -212,10 +227,10 @@ func (p *ResultPage) buildPlaybackControls(overlay *fyne.Container, cellSize, pa
 		stepLabel.Refresh()
 	}
 
-	// Buttons — deklarasi dulu sebelum SetCallbacks
+	// Balik ke awal
 	prevBtn := widget.NewButton("⏮", func() {
-		pb.Pause()
 		pb.PrevStep()
+		updateOverlay(pb.GetcurrStep())
 	})
 	prevBtn.Importance = widget.LowImportance
 
@@ -228,9 +243,10 @@ func (p *ResultPage) buildPlaybackControls(overlay *fyne.Container, cellSize, pa
 	})
 	playBtn.Importance = widget.HighImportance
 
+	// Maju ke akhir
 	nextBtn := widget.NewButton("⏭", func() {
-		pb.Pause()
 		pb.NextStep()
+		updateOverlay(pb.GetcurrStep())
 	})
 	nextBtn.Importance = widget.LowImportance
 
@@ -240,22 +256,15 @@ func (p *ResultPage) buildPlaybackControls(overlay *fyne.Container, cellSize, pa
 	stopBtn.Importance = widget.LowImportance
 
 	skipBackBtn := widget.NewButton("«", func() {
-		pb.Pause()
-		target := pb.GetcurrStep() - 3
-		if target < 0 {
-			target = 0
-		}
-		pb.GoToStep(target)
+		pb.GoToStep(0)
+		updateOverlay(0)
 	})
 	skipBackBtn.Importance = widget.LowImportance
 
 	skipFwdBtn := widget.NewButton("»", func() {
-		pb.Pause()
-		target := pb.GetcurrStep() + 3
-		if target > pb.GetTotalSteps() {
-			target = pb.GetTotalSteps()
-		}
+		target := pb.GetTotalSteps()
 		pb.GoToStep(target)
+		updateOverlay(target)
 	})
 	skipFwdBtn.Importance = widget.LowImportance
 
@@ -273,26 +282,12 @@ func (p *ResultPage) buildPlaybackControls(overlay *fyne.Container, cellSize, pa
 		})
 	})
 
-	stopCh = make(chan struct{})
-
 	// Ticker untuk drive Pback.Update()
 	go func() {
 		ticker := time.NewTicker(50 * time.Millisecond)
 		defer ticker.Stop()
-		// for range ticker.C {
-		// 	if p.main.currentPage != PageResult {
-		// 		fmt.Println("ticker: page changed, stopping")
-		// 		return
-		// 	}
-		// 	fyne.Do(func() { pb.Update() })
-		// }
-		for {
-			select {
-			case <-ticker.C:
-				fyne.Do(func() { pb.Update() })
-			case <-stopCh:
-				return
-			}
+		for range ticker.C {
+			fyne.Do(func() { pb.Update() })
 		}
 	}()
 
@@ -301,6 +296,24 @@ func (p *ResultPage) buildPlaybackControls(overlay *fyne.Container, cellSize, pa
 	pb.Play()
 
 	progressRow := container.NewGridWrap(fyne.NewSize(300, 4), progressTrack)
+
+	speedLabel := canvas.NewText("Speed: 250ms", ColorSlate500)
+	speedLabel.TextSize = 10
+
+	speedSlider := widget.NewSlider(50, 1000)
+	speedSlider.Value = 750
+	speedSlider.Step = 50
+	speedSlider.OnChanged = func(v float64) {
+		delay := int(1050 - v)
+		pb.SetSpeed(delay)
+		speedLabel.Text = fmt.Sprintf("Speed: %dms", delay)
+		speedLabel.Refresh()
+	}
+
+	speedRow := container.NewVBox(
+		container.NewCenter(speedLabel),
+		container.NewGridWrap(fyne.NewSize(300, 20), speedSlider),
+	)
 
 	return container.NewCenter(
 		container.NewVBox(
@@ -311,6 +324,7 @@ func (p *ResultPage) buildPlaybackControls(overlay *fyne.Container, cellSize, pa
 			),
 			vSpacer(4),
 			container.NewCenter(stepLabel),
+			speedRow,
 		),
 	)
 }
@@ -354,37 +368,6 @@ func (p *ResultPage) makeBoardCell(cellRune rune, size fyne.Size) fyne.CanvasObj
 		bg.StrokeWidth = 1
 		return container.NewGridWrap(size, container.NewStack(bg))
 	}
-}
-
-func (p *ResultPage) startPathAnimation(overlay *fyne.Container, cellSize float32, pad, gap float32) {
-	p.animationID++
-	animationID := p.animationID
-	path := append([]puzzle.Point(nil), p.main.solverPath...)
-	if len(path) < 2 {
-		return
-	}
-
-	go func() {
-		ticker := time.NewTicker(90 * time.Millisecond)
-		defer ticker.Stop()
-		for step := 1; step < len(path); step++ {
-			<-ticker.C
-			if p.animationID != animationID {
-				return
-			}
-			currentStep := step
-			fyne.Do(func() {
-				if p.animationID != animationID {
-					return
-				}
-				overlay.Objects = p.buildPathObjects(path[:currentStep+1], cellSize, pad, gap)
-				overlay.Refresh()
-			})
-		}
-	}()
-
-	overlay.Objects = p.buildPathObjects(path[:1], cellSize, pad, gap)
-	overlay.Refresh()
 }
 
 func (p *ResultPage) buildPathObjects(path []puzzle.Point, cellSize float32, pad, gap float32) []fyne.CanvasObject {
@@ -517,12 +500,9 @@ func (p *ResultPage) buildExecutionLogPane() fyne.CanvasObject {
 	}
 	rows := make([]fyne.CanvasObject, 0, len(result.Steps))
 
-	for i, step := range result.Steps {
+	for _, step := range result.Steps {
 		s := step
 		rowBg := canvas.NewRectangle(ColorWhite)
-		if i%2 == 0 {
-			rowBg = canvas.NewRectangle(ColorWhite)
-		}
 		bottomBorder := canvas.NewRectangle(ColorSlate100)
 		bottomBorder.SetMinSize(fyne.NewSize(1, 1))
 
