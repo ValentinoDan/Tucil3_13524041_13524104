@@ -103,6 +103,14 @@ func main() {
 			statusLabel.SetText("✅ GOAL REACHED!")
 			statsLabel.SetText(fmt.Sprintf("Time: %d ms | Iterations: %d | Total Cost: %d", duration.Milliseconds(), iter, goalNode.Cost))
 
+			// Save to file
+			err := filehandler.SaveOutputTxt(currentBoard, points, goalNode.Cost, iter, "output.txt")
+			if err != nil {
+				fmt.Println("Gagal menyimpan file output.txt:", err)
+			} else {
+				fmt.Println("Berhasil men-generate output.txt!")
+			}
+
 			// Animate
 			if boardCanvas != nil {
 				boardCanvas.AnimatePath(points)
@@ -142,10 +150,10 @@ func main() {
 			// Draw Map Grid dengan ukuran yang dinamis
 			maxWidth := float32(380)
 			maxHeight := float32(380)
-			
+
 			gridSizeX := maxWidth / float32(currentBoard.M)
 			gridSizeY := maxHeight / float32(currentBoard.N)
-			
+
 			gridSize := gridSizeX
 			if gridSizeY < gridSize {
 				gridSize = gridSizeY
@@ -156,7 +164,7 @@ func main() {
 			}
 
 			boardCanvas = gui.NewBoardCanvas(currentBoard, gridSize)
-			
+
 			// Bungkus grid dengan Scroll + Center (Sekarang otomatis berada di tengah!)
 			scrollGrid := container.NewScroll(container.NewCenter(boardCanvas.Container))
 			canvasContainer.Objects = []fyne.CanvasObject{scrollGrid}
