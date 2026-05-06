@@ -8,7 +8,6 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-// ArcticTheme implements the custom Arctic Solver theme
 type ArcticTheme struct{}
 
 var _ fyne.Theme = (*ArcticTheme)(nil)
@@ -88,6 +87,7 @@ type tappableRow struct {
     onTapped func()
 }
 
+// Hover
 func newTappableRow(content fyne.CanvasObject, onTapped func()) *tappableRow {
     t := &tappableRow{content: content, onTapped: onTapped}
     t.ExtendBaseWidget(t)

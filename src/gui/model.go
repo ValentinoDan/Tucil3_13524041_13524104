@@ -27,7 +27,7 @@ func (d Difficulty) String() string {
 	return "Unknown"
 }
 
-// MapEntry represents a map file in the library
+// map file in the library
 type MapEntry struct {
 	Filename   string
 	Width      int
@@ -35,7 +35,6 @@ type MapEntry struct {
 	Difficulty Difficulty
 }
 
-// SolverAlgorithm types
 type SolverAlgorithm int
 
 const (
@@ -56,7 +55,6 @@ func (a SolverAlgorithm) String() string {
 	return "Unknown"
 }
 
-// Direction for moves (GUI-facing)
 type Direction int
 
 const (
@@ -80,7 +78,6 @@ func (d Direction) String() string {
 	return "Unknown"
 }
 
-// SolverStep represents a single step in the solution
 type SolverStep struct {
 	StepNum   int
 	Direction Direction
@@ -88,7 +85,7 @@ type SolverStep struct {
 	Cost      int
 }
 
-// SolverResult holds the result of a solver run
+// result
 type SolverResult struct {
 	Found      bool
 	Steps      []SolverStep
@@ -100,9 +97,6 @@ type SolverResult struct {
 	Seed       string
 }
 
-// DefaultLibrary enumerates local `.txt` map files and attempts to
-// parse them to populate width/height. This replaces the old
-// hardcoded list and lets the UI reflect actual files.
 func DefaultLibrary() []*MapEntry {
 	entries := make([]*MapEntry, 0)
 
@@ -141,8 +135,6 @@ func DefaultLibrary() []*MapEntry {
 	return entries
 }
 
-// DefaultSolverResult returns nil. The UI should construct real
-// results from the solver run; fallbacks should be handled by callers.
 func DefaultSolverResult() *SolverResult {
 	return nil
 }

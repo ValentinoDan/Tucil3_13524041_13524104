@@ -3,6 +3,7 @@ package gui
 import (
 	"iceSlidingPuzzle/src/puzzle"
 	"time"
+	"fmt"
 )
 
 // Cell type
@@ -37,7 +38,7 @@ type Pback struct {
 	pausedTime  time.Time
 	totalPaused time.Duration
 
-	onStepChange  func(int)        // called when step changes
+	onStepChange  func(int) // called when step changes
 	onStateChange func(PbackState) // called when play/pause/stop state changes
 }
 
@@ -70,6 +71,8 @@ func (p *Pback) SetCallbacks(onStep func(int), onStateChange func(PbackState)) {
 }
 
 func (p *Pback) Play() {
+	fmt.Printf("Play called: state=%d currStep=%d totalSteps=%d speed=%v\n", 
+        p.state, p.currStep, p.totalSteps, p.speed)
 	if p.state == PbackPlaying {
 		return
 	}
