@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	a := app.New()
+	a := app.NewWithID("com.Arctic")
 	a.Settings().SetTheme(&gui.ArcticTheme{})
 
 	w := a.NewWindow("Arctic Solver")

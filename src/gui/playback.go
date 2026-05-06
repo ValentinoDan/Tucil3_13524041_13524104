@@ -136,11 +136,11 @@ func (p *Pback) Update() bool {
 	}
 
 	if p.currStep >= p.totalSteps {
-		// delay 2s
+		// delay 1s
 		if p.finishTime.IsZero() {
 			p.finishTime = time.Now()
 		}
-		if time.Since(p.finishTime) >= 2*time.Second {
+		if time.Since(p.finishTime) >= 1*time.Second {
 			p.Stop()
 		}
 		return false

@@ -30,6 +30,7 @@ func (d Difficulty) String() string {
 // map file in the library
 type MapEntry struct {
 	Filename   string
+	FullPath   string
 	Width      int
 	Height     int
 	Difficulty Difficulty

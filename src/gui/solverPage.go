@@ -83,9 +83,27 @@ func (p *SolverPage) buildPuzzleGrid() fyne.CanvasObject {
 	cardBg.StrokeColor = ColorOutlineVariant
 	cardBg.StrokeWidth = 1
 
-	cellSize := fyne.NewSize(60, 60)
-	cells := make([]fyne.CanvasObject, 0, b.M*b.N)
+	maxCells := b.M
+	if b.N > maxCells {
+		maxCells = b.N
+	}
+	var cs float32
+	switch {
+	case maxCells <= 5:
+		cs = 60
+	case maxCells <= 8:
+		cs = 48
+	case maxCells <= 12:
+		cs = 36
+	case maxCells <= 16:
+		cs = 28
+	default:
+		cs = 22
+	}
+	cellSize := fyne.NewSize(cs, cs)
+	gap := float32(2)
 
+	cells := make([]fyne.CanvasObject, 0, b.M*b.N)
 	for row := 0; row < b.N; row++ {
 		for col := 0; col < b.M; col++ {
 			cell := p.buildCell(b.Grid[row][col], cellSize)
@@ -93,11 +111,11 @@ func (p *SolverPage) buildPuzzleGrid() fyne.CanvasObject {
 		}
 	}
 
-	gridLayout := container.New(newGridLayoutWithSize(b.M, cellSize, 2), cells...)
+	gridLayout := container.New(newGridLayoutWithSize(b.M, cellSize, gap), cells...)
 
 	gridWrapper := container.NewStack(
 		container.NewGridWrap(
-			fyne.NewSize(float32(b.M)*62+16, float32(b.N)*62+16),
+			fyne.NewSize(float32(b.M)*(cs+gap)+16, float32(b.N)*(cs+gap)+16),
 			cardBg,
 		),
 		container.NewPadded(gridLayout),

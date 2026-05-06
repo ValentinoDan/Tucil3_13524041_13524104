@@ -3,7 +3,6 @@ package gui
 import (
 	"fmt"
 	"iceSlidingPuzzle/src/filehandler"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -16,17 +15,15 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-// LibraryPage is the Map Library screen (Screen 1)
+// Map library
 type LibraryPage struct {
 	main        *MainUI
-	library     []*MapEntry
 	searchQuery string
 }
 
 func NewLibraryPage(m *MainUI) *LibraryPage {
 	return &LibraryPage{
 		main:        m,
-		library:     DefaultLibrary(),
 		searchQuery: m.librarySearchQuery,
 	}
 }
@@ -44,7 +41,7 @@ func (p *LibraryPage) Build() fyne.CanvasObject {
 
 	// Main layout: sidebar + content
 	body := container.NewHSplit(sidebar, mainContent)
-	body.SetOffset(0.18) // ~240/1280
+	body.SetOffset(0.18) 
 
 	fullLayout := container.NewBorder(
 		header,
@@ -56,10 +53,7 @@ func (p *LibraryPage) Build() fyne.CanvasObject {
 	return container.NewStack(bg, fullLayout)
 }
 
-// ─────────────────────────────────────────────
 // Sidebar
-// ─────────────────────────────────────────────
-
 func (p *LibraryPage) buildSidebar() fyne.CanvasObject {
 	bg := canvas.NewRectangle(ColorWhite)
 
@@ -69,7 +63,7 @@ func (p *LibraryPage) buildSidebar() fyne.CanvasObject {
 
 	navTitle := sectionTitle("NAVIGATION")
 
-	// Active item: Library
+	// Active item
 	libBg := canvas.NewRectangle(ColorSidebarActive)
 	libBg.CornerRadius = 4
 	libIcon := canvas.NewText("📂", ColorPrimary)
@@ -82,7 +76,7 @@ func (p *LibraryPage) buildSidebar() fyne.CanvasObject {
 		container.NewPadded(container.NewHBox(libIcon, libLabel)),
 	)
 
-	// Solver Engine nav item
+	// Solver
 	solverIcon := canvas.NewText("🎯", ColorSlate600)
 	solverIcon.TextSize = 16
 	solverLabel := canvas.NewText("Solver", ColorSlate600)
@@ -93,13 +87,6 @@ func (p *LibraryPage) buildSidebar() fyne.CanvasObject {
 		solverBtn,
 		container.NewPadded(container.NewHBox(solverIcon, solverLabel)),
 	)
-
-	// Analytics nav item (disabled for now)
-	// analyticsIcon := canvas.NewText("📊", ColorSlate600)
-	// analyticsIcon.TextSize = 16
-	// analyticsLabel := canvas.NewText("Analytics", ColorSlate600)
-	// analyticsLabel.TextSize = 13
-	// analyticsItem := container.NewPadded(container.NewHBox(analyticsIcon, analyticsLabel))
 
 	navItems := container.NewVBox(
 		navTitle,
@@ -117,10 +104,7 @@ func (p *LibraryPage) buildSidebar() fyne.CanvasObject {
 	return container.NewStack(bg, rightBorder, sidebarContent)
 }
 
-// ─────────────────────────────────────────────
-// Main content (toolbar + grid)
-// ─────────────────────────────────────────────
-
+// Main content
 func (p *LibraryPage) buildMainContent() fyne.CanvasObject {
 	bg := canvas.NewRectangle(ColorWhite)
 
@@ -149,41 +133,33 @@ func (p *LibraryPage) openImportDialog() {
 		srcPath := uc.URI().Path()
 		base := filepath.Base(srcPath)
 
-		data, rerr := os.ReadFile(srcPath)
-		if rerr != nil {
-			dialog.ShowError(rerr, p.main.window)
-			return
-		}
-		if werr := os.WriteFile(base, data, 0644); werr != nil {
-			dialog.ShowError(werr, p.main.window)
-			return
-		}
-
-		if _, perr := filehandler.ParseBoard(base); perr != nil {
+		board, perr := filehandler.ParseBoard(srcPath)
+		if perr != nil {
 			dialog.ShowError(fmt.Errorf("Invalid map file: %w", perr), p.main.window)
 			return
 		}
 
-		board, _ := filehandler.ParseBoard(base)
 		maxDim := board.N
 		if board.M > maxDim {
 			maxDim = board.M
 		}
 		difficulty := Easy
-		if maxDim <= 7 {
-			difficulty = Easy
-		} else if maxDim <= 12 {
-			difficulty = Intermediate
-		} else {
+		if maxDim > 12 {
 			difficulty = Hard
+		} else if maxDim > 7 {
+			difficulty = Intermediate
 		}
 
-		p.main.SelectMap(&MapEntry{
+		entry := &MapEntry{
 			Filename:   base,
+			FullPath:   srcPath,
 			Width:      board.M,
 			Height:     board.N,
 			Difficulty: difficulty,
-		})
+		}
+
+		p.main.library = append(p.main.library, entry)
+		p.main.SelectMap(entry)
 	}, p.main.window)
 	fd.SetFilter(storage.NewExtensionFileFilter([]string{".txt"}))
 	fd.Show()
@@ -231,32 +207,31 @@ func (p *LibraryPage) buildToolbar() fyne.CanvasObject {
 }
 
 func (p *LibraryPage) buildMapGrid() fyne.CanvasObject {
-	cards := make([]fyne.CanvasObject, 0, len(p.library)+1)
+	cards := make([]fyne.CanvasObject, 0, len(p.main.library)+1)
 
-	for _, entry := range p.library {
+	for _, entry := range p.main.library {
 		if p.searchQuery != "" && !strings.Contains(strings.ToLower(entry.Filename), strings.ToLower(p.searchQuery)) {
 			continue
 		}
-		e := entry // capture
+		e := entry 
 		cards = append(cards, p.buildMapCard(e))
 	}
 
-	// "New Map" add card
+	// Add new map card
 	cards = append(cards, p.buildAddCard())
 
-	// Wrap in a flow layout
 	grid := container.New(layout.NewGridWrapLayout(fyne.NewSize(220, 150)), cards...)
 	return grid
 }
 
 func (p *LibraryPage) filteredLibraryCount() int {
 	if p.searchQuery == "" {
-		return len(p.library)
+		return len(p.main.library)
 	}
 
 	count := 0
 	query := strings.ToLower(p.searchQuery)
-	for _, entry := range p.library {
+	for _, entry := range p.main.library {
 		if strings.Contains(strings.ToLower(entry.Filename), query) {
 			count++
 		}
@@ -321,10 +296,7 @@ func (p *LibraryPage) buildMapCard(entry *MapEntry) fyne.CanvasObject {
 	return container.NewStack(bg, container.NewPadded(cardContent))
 }
 
-// ─────────────────────────────────────────────
-// Add / New Map card
-// ─────────────────────────────────────────────
-
+// Add new map card
 func (p *LibraryPage) buildAddCard() fyne.CanvasObject {
 	bg := canvas.NewRectangle(ColorWhite)
 	bg.CornerRadius = 8

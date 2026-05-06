@@ -19,7 +19,6 @@ const (
 	PageResult  Page = iota
 )
 
-// MainUI is the top-level UI controller
 type MainUI struct {
 	app         fyne.App
 	window      fyne.Window
@@ -33,6 +32,7 @@ type MainUI struct {
 	currentBoard       *puzzle.Board
 	solverPath         []puzzle.Point
 	librarySearchQuery string
+	library 		   []*MapEntry
 
 	// pages
 	libraryPage *LibraryPage
@@ -48,6 +48,7 @@ func NewMainUI(a fyne.App, w fyne.Window) *MainUI {
 		selectedAlgo: AlgorithmUCS,
 		currentBoard: nil, // nil until a map is loaded
 		solverResult: nil,
+		library: DefaultLibrary(),
 	}
 	return m
 }
@@ -85,7 +86,7 @@ func (m *MainUI) NavigateTo(p Page) {
 func (m *MainUI) SelectMap(entry *MapEntry) {
 	m.selectedMap = entry
 
-	board, err := filehandler.ParseBoard(entry.Filename)
+	board, err := filehandler.ParseBoard(entry.FullPath)
 	if err == nil {
 		m.currentBoard = board
 		m.solverResult = nil
@@ -98,7 +99,7 @@ func (m *MainUI) SelectMap(entry *MapEntry) {
 func (m *MainUI) RunSolver() {
 	startedAt := time.Now()
 
-	// If no map selected, fallback to default result
+	// fallback to default result (no map condition)
 	if m.selectedMap == nil {
 		m.solverResult = &SolverResult{Found: false}
 		m.solverPath = nil
@@ -107,7 +108,7 @@ func (m *MainUI) RunSolver() {
 	}
 
 	// Parse selected map file into a board
-	board, err := filehandler.ParseBoard(m.selectedMap.Filename)
+	board, err := filehandler.ParseBoard(m.selectedMap.FullPath)
 	if err != nil {
 		// failed to parse — show empty result
 		m.solverResult = &SolverResult{Found: false}
@@ -143,7 +144,6 @@ func (m *MainUI) RunSolver() {
 		path, totalCost = algorithm.AStarSearch(board)
 		found = len(path) > 0
 	default:
-		// unknown; fallback
 		m.solverResult = &SolverResult{Found: false}
 		m.solverPath = nil
 		m.showPage(PageResult)
