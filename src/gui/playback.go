@@ -7,12 +7,12 @@ import (
 
 // Cell type
 const (
-	CellEmpty = iota
-	CellWall
-	CellLava
-	CellPoint
-	CellGoal
-	CellPlayer
+	PBCellEmpty = iota
+	PBCellWall
+	PBCellLava
+	PBCellPoint
+	PBCellGoal
+	PBCellPlayer
 )
 
 // tracks the Curr Pback state
@@ -27,17 +27,17 @@ const (
 // handles solution animation and Pback control
 type Pback struct {
 	// Board and path
-	board      *puzzle.Board
-	pathPoints []puzzle.Point // start to goal
+	board       *puzzle.Board
+	pathPoints  []puzzle.Point // start to goal
 	state       PbackState
-	currStep int 
-	totalSteps  int 
+	currStep    int
+	totalSteps  int
 	speed       time.Duration // ms
 	startTime   time.Time
 	pausedTime  time.Time
 	totalPaused time.Duration
 
-	onStepChange  func(int) // called when step changes
+	onStepChange  func(int)        // called when step changes
 	onStateChange func(PbackState) // called when play/pause/stop state changes
 }
 
@@ -47,7 +47,7 @@ func NewPback(board *puzzle.Board, pathPoints []puzzle.Point) *Pback {
 		board:         board,
 		pathPoints:    pathPoints,
 		state:         PbackStopped,
-		currStep:   0,
+		currStep:      0,
 		totalSteps:    len(pathPoints) - 1,
 		speed:         250 * time.Millisecond, // default 250ms per step
 		onStepChange:  func(int) {},
@@ -75,7 +75,7 @@ func (p *Pback) Play() {
 	}
 
 	if p.currStep >= p.totalSteps {
-		p.currStep = 0 // restart 
+		p.currStep = 0 // restart
 	}
 
 	p.state = PbackPlaying
@@ -178,18 +178,18 @@ func (p *Pback) GetCurrGrid() [][]int {
 			ch := p.board.Grid[r][c]
 			switch ch {
 			case 'X':
-				grid[r][c] = CellWall
+				grid[r][c] = PBCellWall
 			case 'L':
-				grid[r][c] = CellLava
+				grid[r][c] = PBCellLava
 			case 'O':
-				grid[r][c] = CellGoal
+				grid[r][c] = PBCellGoal
 			case 'Z':
-				grid[r][c] = CellPlayer
+				grid[r][c] = PBCellPlayer
 			default:
 				if ch >= '0' && ch <= '9' {
-					grid[r][c] = CellPoint
+					grid[r][c] = PBCellPoint
 				} else {
-					grid[r][c] = CellEmpty
+					grid[r][c] = PBCellEmpty
 				}
 			}
 		}
@@ -198,7 +198,7 @@ func (p *Pback) GetCurrGrid() [][]int {
 	// Place player at curr position
 	pos := p.GetCurrPosition()
 	if pos.Row >= 0 && pos.Row < p.board.N && pos.Col >= 0 && pos.Col < p.board.M {
-		grid[pos.Row][pos.Col] = CellPlayer
+		grid[pos.Row][pos.Col] = PBCellPlayer
 	}
 
 	return grid
