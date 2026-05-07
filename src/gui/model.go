@@ -39,9 +39,10 @@ type MapEntry struct {
 type SolverAlgorithm int
 
 const (
-	AlgorithmUCS   SolverAlgorithm = iota
-	AlgorithmGBFS  SolverAlgorithm = iota
-	AlgorithmAStar SolverAlgorithm = iota
+	AlgorithmUCS     SolverAlgorithm = iota
+	AlgorithmGBFS    SolverAlgorithm = iota
+	AlgorithmAStar 	 SolverAlgorithm = iota
+	AlgorithmIdaStar SolverAlgorithm = iota
 )
 
 func (a SolverAlgorithm) String() string {
@@ -52,6 +53,8 @@ func (a SolverAlgorithm) String() string {
 		return "Greedy Best-First (GBFS)"
 	case AlgorithmAStar:
 		return "A* Search Optimizer"
+	case AlgorithmIdaStar:
+		return "Iterative Deepening A*"
 	}
 	return "Unknown"
 }

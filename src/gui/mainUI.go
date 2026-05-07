@@ -143,6 +143,9 @@ func (m *MainUI) RunSolver() {
 	case AlgorithmAStar:
 		path, totalCost = algorithm.AStarSearch(board)
 		found = len(path) > 0
+	case AlgorithmIdaStar:
+		path, totalCost = algorithm.IDAStarSearch(board)
+		found = len(path) > 0
 	default:
 		m.solverResult = &SolverResult{Found: false}
 		m.solverPath = nil

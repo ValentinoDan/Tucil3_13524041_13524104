@@ -305,6 +305,7 @@ func (p *SolverPage) buildExecutionEngineCard() fyne.CanvasObject {
 		AlgorithmUCS,
 		AlgorithmGBFS,
 		AlgorithmAStar,
+		AlgorithmIdaStar,
 	}
 
 	algoItems := make([]fyne.CanvasObject, 0, len(algorithms))
@@ -371,7 +372,7 @@ func (p *SolverPage) buildExecutionEngineCard() fyne.CanvasObject {
 		titleRow,
 		sep,
 		algoList,
-		vSpacer(12),
+		vSpacer(6),
 		startBtn,
 	)
 
