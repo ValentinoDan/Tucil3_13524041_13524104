@@ -224,7 +224,7 @@ func (m *MainUI) RunSolver() {
 		Steps:      steps,
 		TotalCost:  totalCost,
 		TotalMoves: stepNum - 1,
-		DurationMs: int(time.Since(startedAt).Milliseconds()),
+		DurationMs: float64(time.Since(startedAt).Microseconds()) / 1000.0,
 		Weight:     0,
 		Level:      0,
 		Seed:       "",

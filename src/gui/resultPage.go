@@ -456,8 +456,16 @@ func (p *ResultPage) buildVisualizerFooter() fyne.CanvasObject {
 	costVal.TextStyle = fyne.TextStyle{Bold: true}
 	costBlock := container.NewVBox(costLabel, costVal)
 
+	timeLabel := canvas.NewText("TOTAL TIME", ColorSlate500)
+	timeLabel.TextSize = 9
+	timeLabel.TextStyle = fyne.TextStyle{Bold: true}
+	timeVal := canvas.NewText(fmt.Sprintf("%.3f ms", result.DurationMs), ColorPrimary)
+	timeVal.TextSize = 13
+	timeVal.TextStyle = fyne.TextStyle{Bold: true}
+	timeBlock := container.NewVBox(timeLabel, timeVal)
+
 	footerContent := container.NewPadded(
-		container.NewHBox(movesBlock, hSpacer(24), costBlock),
+		container.NewHBox(movesBlock, hSpacer(24), costBlock, hSpacer(24), timeBlock),
 	)
 
 	return container.NewStack(

@@ -389,7 +389,7 @@ func (p *SolverPage) buildMetricsCard() fyne.CanvasObject {
 	if result == nil {
 		result = &SolverResult{}
 	}
-	durationBlock := statBlock("DURATION", fmt.Sprintf("%dms", result.DurationMs))
+	durationBlock := statBlock("DURATION", fmt.Sprintf("%.3fms", result.DurationMs))
 	stepsBlock := statBlock("STEPS", fmt.Sprintf("%d", result.TotalMoves))
 	costBlock := statBlock("COST", fmt.Sprintf("%d", result.TotalCost))
 

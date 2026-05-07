@@ -92,7 +92,7 @@ type SolverResult struct {
 	Steps      []SolverStep
 	TotalCost  int
 	TotalMoves int
-	DurationMs int
+	DurationMs float64
 	Weight     int
 	Level      int
 	Seed       string
