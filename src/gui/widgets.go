@@ -214,8 +214,8 @@ func hSpacer(w float32) fyne.CanvasObject {
 	return r
 }
 
-func sectionTitle(text string) *canvas.Text {
-	t := canvas.NewText(text, ColorSlate400)
+func sectionTitle(text string, color color.Color) *canvas.Text {
+	t := canvas.NewText(text, color)
 	t.TextSize = 10
 	t.TextStyle = fyne.TextStyle{Bold: true}
 	return t

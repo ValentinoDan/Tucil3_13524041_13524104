@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 	"iceSlidingPuzzle/src/filehandler"
+	"image/color"
 	"path/filepath"
 	"strings"
 
@@ -61,7 +62,7 @@ func (p *LibraryPage) buildSidebar() fyne.CanvasObject {
 	rightBorder := canvas.NewRectangle(ColorOutlineVariant)
 	rightBorder.SetMinSize(fyne.NewSize(1, 1))
 
-	navTitle := sectionTitle("NAVIGATION")
+	navTitle := sectionTitle("NAVIGATION", color.Black)
 
 	// Active item
 	libBg := canvas.NewRectangle(ColorSidebarActive)
