@@ -2,6 +2,7 @@ package gui
 
 import (
 	"image/color"
+	"os"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/theme"
@@ -52,7 +53,11 @@ func (t *ArcticTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant)
 }
 
 func (t *ArcticTheme) Font(style fyne.TextStyle) fyne.Resource {
-	return theme.DefaultTheme().Font(style)
+	fontData, err := os.ReadFile("src/font/PlusJakartaSans-Regular.ttf")
+    if err == nil {
+        return fyne.NewStaticResource("PlusJakartaSans-Regular.ttf", fontData)
+    }
+    return theme.DefaultTheme().Font(style)
 }
 
 func (t *ArcticTheme) Icon(name fyne.ThemeIconName) fyne.Resource {
