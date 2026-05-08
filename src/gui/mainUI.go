@@ -120,10 +120,12 @@ func (m *MainUI) RunSolver() {
 	var path []puzzle.Point
 	var totalCost int
 	var found bool
+	var iter int
 
 	switch m.selectedAlgo {
 	case AlgorithmUCS:
-		node, _ := algorithm.UCS(board)
+		node, iterTemp := algorithm.UCS(board)
+		iter = iterTemp
 		if node != nil {
 			// reconstruct path from node
 			var rev []puzzle.Point
@@ -138,13 +140,13 @@ func (m *MainUI) RunSolver() {
 			found = true
 		}
 	case AlgorithmGBFS:
-		path, totalCost = algorithm.GreedyBestFirstSearch(board)
+		path, totalCost, iter = algorithm.GreedyBestFirstSearch(board)
 		found = len(path) > 0
 	case AlgorithmAStar:
-		path, totalCost = algorithm.AStarSearch(board)
+		path, totalCost, iter = algorithm.AStarSearch(board)
 		found = len(path) > 0
 	case AlgorithmIdaStar:
-		path, totalCost = algorithm.IDAStarSearch(board)
+		path, totalCost, iter = algorithm.IDAStarSearch(board)
 		found = len(path) > 0
 	default:
 		m.solverResult = &SolverResult{Found: false}
@@ -231,6 +233,7 @@ func (m *MainUI) RunSolver() {
 		Weight:     0,
 		Level:      0,
 		Seed:       "",
+		Iterations: iter,
 	}
 	m.solverResult = res
 	m.solverPath = path

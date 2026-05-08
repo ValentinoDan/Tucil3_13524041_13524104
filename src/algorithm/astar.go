@@ -4,9 +4,10 @@ import (
 	"iceSlidingPuzzle/src/puzzle"
 )
 
-func AStarSearch(board *puzzle.Board) ([]puzzle.Point, int) {
+func AStarSearch(board *puzzle.Board) ([]puzzle.Point, int, int) {
 	var pathTaken []puzzle.Point
 	var totalCost int
+	iter := 0
 
 	pq := &puzzle.PriorityQueue{}
 	visited := make(map[puzzle.State]bool)
@@ -34,6 +35,7 @@ func AStarSearch(board *puzzle.Board) ([]puzzle.Point, int) {
 
 	for !pq.IsEmpty() {
 		curr := pq.Pop()
+		iter++
 
 		if puzzle.IsGoal(curr.State.Pos, board) && curr.State.NextNum == len(board.Checkpoint) {
 			finalNode = curr
@@ -64,7 +66,7 @@ func AStarSearch(board *puzzle.Board) ([]puzzle.Point, int) {
 	}
 
 	if finalNode == nil {
-		return pathTaken, 0
+		return pathTaken, 0, iter
 	}
 
 	currNode := finalNode
@@ -77,5 +79,5 @@ func AStarSearch(board *puzzle.Board) ([]puzzle.Point, int) {
 	}
 
 	totalCost = stateCost[finalNode.State]
-	return pathTaken, totalCost
+	return pathTaken, totalCost, iter
 }

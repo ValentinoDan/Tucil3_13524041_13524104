@@ -567,7 +567,7 @@ func (p *ResultPage) buildExecutionLogPane() fyne.CanvasObject {
 			}
 			filePath := writer.URI().Path()
 			writer.Close()
-			err = filehandler.SaveOutputTxt(p.main.currentBoard, p.main.solverPath, p.main.solverResult.TotalCost, 0, filePath)
+			err = filehandler.SaveOutputTxt(p.main.currentBoard, p.main.solverPath, p.main.solverResult.TotalCost, p.main.solverResult.Iterations, p.main.solverResult.DurationMs, filePath)
 			if err != nil {
 				dialog.ShowError(err, p.main.window)
 			} else {

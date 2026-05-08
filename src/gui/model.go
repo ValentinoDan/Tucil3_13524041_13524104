@@ -41,7 +41,7 @@ type SolverAlgorithm int
 const (
 	AlgorithmUCS     SolverAlgorithm = iota
 	AlgorithmGBFS    SolverAlgorithm = iota
-	AlgorithmAStar 	 SolverAlgorithm = iota
+	AlgorithmAStar   SolverAlgorithm = iota
 	AlgorithmIdaStar SolverAlgorithm = iota
 )
 
@@ -96,6 +96,7 @@ type SolverResult struct {
 	TotalCost  int
 	TotalMoves int
 	DurationMs float64
+	Iterations int
 	Weight     int
 	Level      int
 	Seed       string

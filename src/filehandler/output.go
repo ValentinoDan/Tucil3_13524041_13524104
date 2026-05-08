@@ -38,7 +38,7 @@ func getBoardStateStr(board *puzzle.Board, currentPos puzzle.Point) string {
 	return sb.String()
 }
 
-func SaveOutputTxt(board *puzzle.Board, pathTaken []puzzle.Point, cost int, totalNodes int, filename string) error {
+func SaveOutputTxt(board *puzzle.Board, pathTaken []puzzle.Point, cost int, totalNodes int, executionTime float64, filename string) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func SaveOutputTxt(board *puzzle.Board, pathTaken []puzzle.Point, cost int, tota
 	}
 	file.WriteString(fmt.Sprintf("Solusi gerakan yang ditemukan: %s\n", strings.Join(steps, ", ")))
 	file.WriteString(fmt.Sprintf("Cost dari solusi: %d\n", cost))
-	file.WriteString(fmt.Sprintf("Jumlah node / iterasi yang ditinjau: %d\n\n", totalNodes))
+
 	if len(pathTaken) > 0 {
 		file.WriteString("Initial\n")
 		file.WriteString(getBoardStateStr(board, pathTaken[0]))
@@ -64,6 +64,7 @@ func SaveOutputTxt(board *puzzle.Board, pathTaken []puzzle.Point, cost int, tota
 		file.WriteString(getBoardStateStr(board, pathTaken[i]))
 		file.WriteString("\n")
 	}
-
+	file.WriteString(fmt.Sprintf("Waktu eksekusi: %.3f ms\n", executionTime))
+	file.WriteString(fmt.Sprintf("Banyak iterasi yang dilakukan: %d iterasi\n\n", totalNodes))
 	return nil
 }

@@ -7,7 +7,8 @@ import (
 
 const FOUND = -1
 
-func idaStarDFS(board *puzzle.Board, currNode *puzzle.Node, g int, threshold int, pathMap map[puzzle.State]bool) (int, *puzzle.Node) {
+func idaStarDFS(board *puzzle.Board, currNode *puzzle.Node, g int, threshold int, pathMap map[puzzle.State]bool, iter *int) (int, *puzzle.Node) {
+	(*iter)++
 	h := puzzle.CalculateHeuristic(board, currNode.State)
 	f := g + h
 	if f > threshold {
@@ -35,7 +36,7 @@ func idaStarDFS(board *puzzle.Board, currNode *puzzle.Node, g int, threshold int
 				Dir:    dir,
 			}
 
-			t, resultNode := idaStarDFS(board, neighborNode, newG, threshold, pathMap)
+			t, resultNode := idaStarDFS(board, neighborNode, newG, threshold, pathMap, iter)
 			if t == FOUND {
 				return FOUND, resultNode
 			}
@@ -50,11 +51,12 @@ func idaStarDFS(board *puzzle.Board, currNode *puzzle.Node, g int, threshold int
 	return min, nil
 }
 
-func IDAStarSearch(board *puzzle.Board) ([]puzzle.Point, int) {
+func IDAStarSearch(board *puzzle.Board) ([]puzzle.Point, int, int) {
 	startState := puzzle.State{
 		Pos:     board.Start,
 		NextNum: 0,
 	}
+	iter := 0
 
 	startNode := &puzzle.Node{
 		State:  startState,
@@ -69,7 +71,7 @@ func IDAStarSearch(board *puzzle.Board) ([]puzzle.Point, int) {
 	for {
 		pathMap := make(map[puzzle.State]bool)
 		pathMap[startState] = true
-		t, finalNode := idaStarDFS(board, startNode, 0, threshold, pathMap)
+		t, finalNode := idaStarDFS(board, startNode, 0, threshold, pathMap, &iter)
 
 		if t == FOUND {
 			var pathTaken []puzzle.Point
@@ -81,10 +83,10 @@ func IDAStarSearch(board *puzzle.Board) ([]puzzle.Point, int) {
 			for i, j := 0, len(pathTaken)-1; i < j; i, j = i+1, j-1 {
 				pathTaken[i], pathTaken[j] = pathTaken[j], pathTaken[i]
 			}
-			return pathTaken, finalNode.Cost
+			return pathTaken, finalNode.Cost, iter
 		}
 		if t == math.MaxInt32 {
-			return []puzzle.Point{}, 0
+			return []puzzle.Point{}, 0, iter
 		}
 		threshold = t
 	}
