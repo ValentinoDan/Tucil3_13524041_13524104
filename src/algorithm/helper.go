@@ -70,23 +70,11 @@ func slide(startState puzzle.State, dir puzzle.Direction, board *puzzle.Board) (
 		if puzzle.IsGoal(currPos, board) {
 			nextCell := puzzle.Point{Row: currPos.Row + dRow, Col: currPos.Col + dCol}
 			isBlocked := !puzzle.IsInBounds(nextCell, board) || puzzle.IsWall(nextCell, board)
-			
-			// if isBlocked {
-			// 	if nextNum == len(board.Checkpoint) {
-			// 		break 
-			// 	} else {
-			// 		return puzzle.State{}, 0, false // belum semua checkpoint
-			// 	}
-			// }
 
-			// if nextNum != len(board.Checkpoint) {
-			// 	return puzzle.State{}, 0, false
-			// }
-			if isBlocked && nextNum == len(board.Checkpoint){
+			// stop di O (kalau belum semua checkpoint, nanti lanjut lagi dengan loop di masing2 algo)
+			if isBlocked {
 				break;
-			} 
-			
-			return puzzle.State{}, 0, false
+			}
 		}
 	}
 
