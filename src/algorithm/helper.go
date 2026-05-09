@@ -4,7 +4,7 @@ import (
 	"iceSlidingPuzzle/src/puzzle"
 )
 
-// Abs returns the absolute value of x.
+// mutlak x
 func Abs(x int) int {
 	if x < 0 {
 		return -x

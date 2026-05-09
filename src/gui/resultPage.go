@@ -578,7 +578,7 @@ func (p *ResultPage) buildExecutionLogPane() fyne.CanvasObject {
 		fd.Show()
 	})
 	saveBtn.Importance = widget.HighImportance
-	backBtn := widget.NewButton("⊞  BACK TO DASHBOARD", func() {
+	backBtn := widget.NewButton("📊  BACK TO DASHBOARD", func() {
 		p.main.NavigateTo(PageSolver)
 	})
 	backBtn.Importance = widget.HighImportance
