@@ -255,7 +255,7 @@ func (p *SolverPage) buildMapConfigCard() fyne.CanvasObject {
 	mapName.TextStyle = fyne.TextStyle{Bold: true}
 
 	dimText := canvas.NewText(
-		fmt.Sprintf("%d × %d grid", p.main.selectedMap.Width, p.main.selectedMap.Height),
+		fmt.Sprintf("%d × %d grid", p.main.selectedMap.Height, p.main.selectedMap.Width),
 		ColorSlate500,
 	)
 	dimText.TextSize = 11

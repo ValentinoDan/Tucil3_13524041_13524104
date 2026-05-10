@@ -276,7 +276,7 @@ func (p *LibraryPage) buildMapCard(entry *MapEntry) fyne.CanvasObject {
 	filename.TextStyle = fyne.TextStyle{Bold: true}
 
 	// Dimensions
-	dims := canvas.NewText(fmt.Sprintf("%d × %d Dimensions", entry.Width, entry.Height), ColorSlate500)
+	dims := canvas.NewText(fmt.Sprintf("%d × %d Dimensions", entry.Height, entry.Width), ColorSlate500)
 	dims.TextSize = 11
 
 	info := container.NewVBox(filename, dims)
