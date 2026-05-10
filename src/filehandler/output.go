@@ -65,6 +65,6 @@ func SaveOutputTxt(board *puzzle.Board, pathTaken []puzzle.Point, cost int, tota
 		file.WriteString("\n")
 	}
 	file.WriteString(fmt.Sprintf("Waktu eksekusi: %.3f ms\n", executionTime))
-	file.WriteString(fmt.Sprintf("Banyak iterasi yang dilakukan: %d iterasi\n\n", totalNodes))
+	file.WriteString(fmt.Sprintf("Banyak iterasi yang dilakukan: %d iterasi", totalNodes))
 	return nil
 }
