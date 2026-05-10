@@ -47,19 +47,11 @@ func (p *SolverPage) Build() fyne.CanvasObject {
 	return container.NewStack(bg, fullLayout)
 }
 
-// ─────────────────────────────────────────────
-// Left pane: puzzle grid
-// ─────────────────────────────────────────────
-
+// Puzzle grid
 func (p *SolverPage) buildGridPane() fyne.CanvasObject {
 	bg := canvas.NewRectangle(ColorWhite)
 
 	grid := p.buildPuzzleGrid()
-
-	// scrolledGrid := container.NewScroll(container.NewCenter(container.NewPadded(grid)))
-	// scrolledGrid.SetMinSize(fyne.NewSize(0, 0))
-
-	// centerContent := container.NewCenter(scrolledGrid)
 
 	scrolled := container.NewScroll(
 		container.NewCenter(
@@ -73,7 +65,7 @@ func (p *SolverPage) buildGridPane() fyne.CanvasObject {
 func (p *SolverPage) buildPuzzleGrid() fyne.CanvasObject {
 	b := p.main.currentBoard
 	if b == nil {
-		// No map loaded yet — show placeholder
+		// placeholder (no map loaded yet)
 		placeholder := widget.NewLabelWithStyle("📋 Load a map to see the puzzle grid", fyne.TextAlignCenter, fyne.TextStyle{})
 		return container.NewCenter(placeholder)
 	}
@@ -282,10 +274,7 @@ func (p *SolverPage) buildMapConfigCard() fyne.CanvasObject {
 	return container.NewStack(cardBg, container.NewPadded(content))
 }
 
-// ─────────────────────────────────────────────
-// Execution Engine Card
-// ─────────────────────────────────────────────
-
+// Algo options card
 func (p *SolverPage) buildExecutionEngineCard() fyne.CanvasObject {
 	cardBg := canvas.NewRectangle(ColorWhite)
 	cardBg.CornerRadius = 8

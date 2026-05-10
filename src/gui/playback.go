@@ -37,7 +37,7 @@ type Pback struct {
 	pausedElapsed time.Duration
 	finishTime    time.Time
 
-	onStepChange  func(int)        // called when step changes
+	onStepChange  func(int) // called when step changes
 	onStateChange func(PbackState) // called when play/pause/stop state changes
 }
 

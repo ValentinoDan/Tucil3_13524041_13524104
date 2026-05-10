@@ -162,14 +162,6 @@ func primaryButton(label string, onTap func()) *widget.Button {
 	return btn
 }
 
-func sectionCard(content fyne.CanvasObject) fyne.CanvasObject {
-	bg := canvas.NewRectangle(ColorWhite)
-	bg.CornerRadius = 8
-	bg.StrokeColor = ColorOutlineVariant
-	bg.StrokeWidth = 1
-	return container.NewStack(bg, container.NewPadded(content))
-}
-
 func statBlock(label, value string) fyne.CanvasObject {
 	lbl := canvas.NewText(label, ColorOutline)
 	lbl.TextSize = 9
@@ -180,24 +172,6 @@ func statBlock(label, value string) fyne.CanvasObject {
 	val.TextStyle = fyne.TextStyle{Bold: true}
 
 	return container.NewVBox(lbl, val)
-}
-
-func metricBlock(label, value string) fyne.CanvasObject {
-	lbl := canvas.NewText(label, ColorSlate500)
-	lbl.TextSize = 10
-	lbl.TextStyle = fyne.TextStyle{Bold: true}
-
-	val := canvas.NewText(value, ColorPrimary)
-	val.TextSize = 13
-	val.TextStyle = fyne.TextStyle{Bold: true}
-
-	return container.NewVBox(lbl, val)
-}
-
-func hLine(c color.Color) fyne.CanvasObject {
-	line := canvas.NewRectangle(c)
-	line.SetMinSize(fyne.NewSize(1, 1))
-	return line
 }
 
 func vSpacer(h float32) fyne.CanvasObject {

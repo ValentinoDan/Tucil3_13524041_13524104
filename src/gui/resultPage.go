@@ -532,7 +532,7 @@ func (p *ResultPage) buildExecutionLogPane() fyne.CanvasObject {
 		actionName.TextSize = 12
 		actionName.TextStyle = fyne.TextStyle{Bold: true}
 		actionUnit := canvas.NewText(
-			fmt.Sprintf("%d unit%s", s.Units, pluralS(s.Units)),
+			fmt.Sprintf("%d tile%s", s.Tiles, pluralS(s.Tiles)),
 			ColorSlate500,
 		)
 		actionUnit.TextSize = 10

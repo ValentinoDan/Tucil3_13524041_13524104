@@ -52,7 +52,7 @@ func (a SolverAlgorithm) String() string {
 	case AlgorithmGBFS:
 		return "Greedy Best-First (GBFS)"
 	case AlgorithmAStar:
-		return "A* Search Optimizer"
+		return "A* Search"
 	case AlgorithmIdaStar:
 		return "Iterative Deepening A*"
 	}
@@ -85,7 +85,7 @@ func (d Direction) String() string {
 type SolverStep struct {
 	StepNum   int
 	Direction Direction
-	Units     int
+	Tiles     int
 	Cost      int
 }
 
@@ -138,8 +138,4 @@ func DefaultLibrary() []*MapEntry {
 	}
 
 	return entries
-}
-
-func DefaultSolverResult() *SolverResult {
-	return nil
 }

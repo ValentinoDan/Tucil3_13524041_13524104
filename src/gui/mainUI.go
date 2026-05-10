@@ -175,7 +175,7 @@ func (m *MainUI) RunSolver() {
 		}
 
 		// hitung jumlah sel yang dilewati selama slide
-		units := 0
+		tiles := 0
 		stepCost := 0
 		for i < len(path) {
 			p := path[i]
@@ -196,7 +196,7 @@ func (m *MainUI) RunSolver() {
 
 			// hitung jarak antar dua point
 			dist := algorithm.Abs(p.Row-pp.Row) + algorithm.Abs(p.Col-pp.Col)
-			units += dist
+			tiles += dist
 
 			for s := 1; s <= dist; s++ {
 				var r, c int
@@ -218,7 +218,7 @@ func (m *MainUI) RunSolver() {
 		steps = append(steps, SolverStep{
 			StepNum:   stepNum,
 			Direction: dir,
-			Units:     units,
+			Tiles:     tiles,
 			Cost:      stepCost,
 		})
 		stepNum++
