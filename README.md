@@ -66,14 +66,14 @@ Contoh file input tersedia di folder `test/`
 #### Windows
 Jalankan langsung executable yang tersedia di folder `bin/`:
 ```powershell
-.\bin\ArcticSolver.exe
+.\bin\IceSlidingPuzzle.exe
 ```
 
 #### Linux
 Beri izin execute terlebih dahulu, lalu jalankan:
 ```bash
-chmod +x bin/ArcticSolver
-./bin/ArcticSolver
+chmod +x bin/IceSlidingPuzzle
+./bin/IceSlidingPuzzle.exe
 ```
 
 ### Menjalankan Langsung
