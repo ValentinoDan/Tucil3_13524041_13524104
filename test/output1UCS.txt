@@ -1,0 +1,148 @@
+Solusi gerakan yang ditemukan: R, D, L, U, L, D, R, U, R, D, L
+Cost dari solusi: 179
+Initial
+XXXXXXXXXXXXXX
+XZ****X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO***X
+XXXXXXXXXXXXXX
+
+Step 1 : R
+XXXXXXXXXXXXXX
+X****ZX******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO***X
+XXXXXXXXXXXXXX
+
+Step 2 : D
+XXXXXXXXXXXXXX
+X*****X******X
+X*X***X*X****X
+X*X*0ZX*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO***X
+XXXXXXXXXXXXXX
+
+Step 3 : L
+XXXXXXXXXXXXXX
+X*****X******X
+X*X***X*X****X
+X*XZ0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO***X
+XXXXXXXXXXXXXX
+
+Step 4 : U
+XXXXXXXXXXXXXX
+X**Z**X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO***X
+XXXXXXXXXXXXXX
+
+Step 5 : L
+XXXXXXXXXXXXXX
+XZ****X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO***X
+XXXXXXXXXXXXXX
+
+Step 6 : D
+XXXXXXXXXXXXXX
+X*****X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+XZ*1****XO***X
+XXXXXXXXXXXXXX
+
+Step 7 : R
+XXXXXXXXXXXXXX
+X*****X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1***ZXO***X
+XXXXXXXXXXXXXX
+
+Step 8 : U
+XXXXXXXXXXXXXX
+X*****X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X******Z**2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO***X
+XXXXXXXXXXXXXX
+
+Step 9 : R
+XXXXXXXXXXXXXX
+X*****X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2*ZX
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO***X
+XXXXXXXXXXXXXX
+
+Step 10 : D
+XXXXXXXXXXXXXX
+X*****X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XO**ZX
+XXXXXXXXXXXXXX
+
+Step 11 : L
+XXXXXXXXXXXXXX
+X*****X******X
+X*X***X*X****X
+X*X*0*X*X****X
+X*XXXXXXXXXXXX
+X*********2**X
+X*XXXXX*XXXX*X
+X*X***X*X****X
+X**1****XZ***X
+XXXXXXXXXXXXXX
+
+Waktu eksekusi: 0.596 ms
+Banyak iterasi yang dilakukan: 31 iterasi
